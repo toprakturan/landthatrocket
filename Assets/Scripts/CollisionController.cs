@@ -17,6 +17,8 @@ public class CollisionController : MonoBehaviour
     private float _getFuel;
     public bool isFuelEmpty = false;
     public Canvas outOfGasCanvas, crashCanvas;
+    public bool fuelCollision = false;
+    private Slider _slider;
 
 
 
@@ -36,14 +38,17 @@ public class CollisionController : MonoBehaviour
     {
         getCurrentLevelIndex = SceneManager.GetActiveScene().buildIndex;
         _getFuel = PlayerController.Current.Fuel;
+        _slider = PlayerController.Current.slider;
+
         //StartCrashSequence();
         //StartSuccessSequence();
+
+        //Check fuel is empty
         if (_getFuel == 0 && isFuelEmpty == false)
         {
             StartOutOfGasSequence();
             isFuelEmpty = true;
         }
-       
     }
 
     private void OnCollisionEnter(Collision other)
@@ -61,7 +66,7 @@ public class CollisionController : MonoBehaviour
                 StartSuccessSequence();
                 break;
             case "fuel":
-                Debug.Log("collision fuel");
+               // Debug.Log("collision fuel");
                 break;
             default:
                 StartCrashSequence();
@@ -69,7 +74,20 @@ public class CollisionController : MonoBehaviour
         }
     }
 
-     public void StartSuccessSequence()
+    //To control fuel collision
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "fuel")
+        {
+            Debug.Log("fuelCollision");
+            fuelCollision = true;
+            checkSceneToFillFuel();
+            Destroy(other.gameObject);
+            fuelCollision = false;
+        }
+    }
+
+    public void StartSuccessSequence()
     {
         isTransitioning = true;
         audioSource.Stop();
@@ -113,5 +131,41 @@ public class CollisionController : MonoBehaviour
         int currenSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currenSceneIndex + 1;
         SceneManager.LoadScene(nextSceneIndex);
+    }
+
+    //Fill the fuel
+    public void FillFuel(float fillValue)
+    {
+        _slider.value += fillValue;
+    }
+
+    //Level check for the amount of gas to be added
+    public void checkSceneToFillFuel()
+    {
+        if (getCurrentLevelIndex == 1)
+        {
+            FillFuel(5000f);
+
+        }
+        else if (getCurrentLevelIndex == 2)
+        {
+            FillFuel(3000f);
+        }
+        else if (getCurrentLevelIndex == 3)
+        {
+            FillFuel(2500f);
+        }
+        else if (getCurrentLevelIndex == 4)
+        {
+            FillFuel(2000f);
+        }
+        else if (getCurrentLevelIndex == 5)
+        {
+            FillFuel(1500f);
+        }
+        else
+        {
+
+        }
     }
 }

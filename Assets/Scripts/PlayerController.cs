@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private int CurrentLevel;
     public static PlayerController Current;
     AudioSource audioSource;
+    private bool _isfuelCollided;
 
     [SerializeField] ParticleSystem mainEngineParticle;
     
@@ -31,9 +32,12 @@ public class PlayerController : MonoBehaviour
     {
         ProcessThrust();
         ProcessRotation();
+        Debug.Log(slider.value.ToString());
        
 
         CurrentLevel = CollisionController.Current.getCurrentLevelIndex;
+        _isfuelCollided = CollisionController.Current.fuelCollision;
+        
 
 
     }
@@ -44,25 +48,27 @@ public class PlayerController : MonoBehaviour
         {
             rb.AddRelativeForce(Vector3.up * upSpeed * Time.deltaTime);
 
+            //Level check to update fuel consumption
             if (CurrentLevel == 1)
             {
-                UpdateFuel(5f);
+                UpdateFuel(2f);
+                
             }
             else if (CurrentLevel == 2)
             {
-                UpdateFuel(0.8f);
+                UpdateFuel(3f);
             }
             else if (CurrentLevel == 3)
             {
-                UpdateFuel(1f);
+                UpdateFuel(4f);
             }
             else if (CurrentLevel == 4)
             {
-                UpdateFuel(1.3f);
+                UpdateFuel(5f);
             }
-            else if (CurrentLevel == 5)
+            else if (CurrentLevel == 5)       
             {
-                UpdateFuel(1.5f);
+                UpdateFuel(5f);
             }
             else
             {
@@ -106,4 +112,13 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime);
         rb.freezeRotation = false; //unfreezing back to normal
     }
+
+    //public void fillFuel(float fillValue)
+    //{
+    //    if(_isfuelCollided == true)
+    //    {
+    //        slider.value += fillValue;
+           
+    //    }
+    //}
 }
