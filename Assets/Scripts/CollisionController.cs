@@ -10,8 +10,10 @@ public class CollisionController : MonoBehaviour
     [SerializeField] float levelLoadDeleay = 2f;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip crash;
+    [SerializeField] AudioClip fuelCollectSFX;
     [SerializeField] ParticleSystem successParticles;
     [SerializeField] ParticleSystem crashParticles;
+    [SerializeField] ParticleSystem fuelCollectParticles;
     public static CollisionController Current;
     public int getCurrentLevelIndex;
     private float _getFuel;
@@ -19,6 +21,7 @@ public class CollisionController : MonoBehaviour
     public Canvas outOfGasCanvas, crashCanvas;
     public bool fuelCollision = false;
     private Slider _slider;
+    private bool _isCollide = false;
 
 
 
@@ -32,6 +35,8 @@ public class CollisionController : MonoBehaviour
         Current = this;
         outOfGasCanvas.GetComponent<Canvas>().enabled = false;
         crashCanvas.GetComponent<Canvas>().enabled = false;
+       
+
     }
 
     private void Update()
@@ -60,7 +65,7 @@ public class CollisionController : MonoBehaviour
         switch (other.gameObject.tag)
         {
             case "Friendly":
-                Debug.Log("this is friend");
+                //Debug.Log("this is friend");
                 break;
             case "Finish":
                 StartSuccessSequence();
@@ -81,6 +86,8 @@ public class CollisionController : MonoBehaviour
         {
             Debug.Log("fuelCollision");
             fuelCollision = true;
+            audioSource.PlayOneShot(fuelCollectSFX);
+            fuelCollectParticles.Play();
             checkSceneToFillFuel();
             Destroy(other.gameObject);
             fuelCollision = false;
@@ -89,35 +96,50 @@ public class CollisionController : MonoBehaviour
 
     public void StartSuccessSequence()
     {
-        isTransitioning = true;
-        audioSource.Stop();
-        audioSource.PlayOneShot(success);
-        successParticles.Play();
-        Debug.Log("deneme");
-        GetComponent<PlayerController>().enabled = false; //Stop player movement
-        Invoke("LoadNextLevel", 3f);
+        if (_isCollide == false)
+        {
+            isTransitioning = true;
+            audioSource.Stop();
+            audioSource.PlayOneShot(success);
+            successParticles.Play();
+            Debug.Log("deneme");
+            GetComponent<PlayerController>().enabled = false; //Stop player movement
+            Invoke("LoadNextLevel", 3f);
+            _isCollide = true;
+        }
+        
     }
 
     public void StartCrashSequence()
     {
-        isTransitioning = false;
-        audioSource.Stop();
-        audioSource.PlayOneShot(crash);
-        crashParticles.Play();
-        GetComponent<PlayerController>().enabled = false; //Stop player movement
-        crashCanvas.GetComponent<Canvas>().enabled = true;
-        //Invoke("ReloadLevel", 3f);
+        if(_isCollide == false)
+        {
+            isTransitioning = false;
+            audioSource.Stop();
+            audioSource.PlayOneShot(crash);
+            crashParticles.Play();
+            GetComponent<PlayerController>().enabled = false; //Stop player movement
+            crashCanvas.GetComponent<Canvas>().enabled = true;
+            _isCollide = true;
+            //Level reload when player press retry button. (In scenemanagment script)
+        }
+
     }
 
     public void StartOutOfGasSequence()
     {
-        isTransitioning = false;
-        audioSource.Stop();
-        audioSource.PlayOneShot(crash);
-        crashParticles.Play();
-        GetComponent<PlayerController>().enabled = false; //Stop player movement
-        outOfGasCanvas.GetComponent<Canvas>().enabled = true;
-        //Invoke("ReloadLevel", 3f);
+        if(_isCollide == false)
+        {
+            isTransitioning = false;
+            audioSource.Stop();
+            audioSource.PlayOneShot(crash);
+            crashParticles.Play();
+            GetComponent<PlayerController>().enabled = false; //Stop player movement
+            outOfGasCanvas.GetComponent<Canvas>().enabled = true;
+            _isCollide = true;
+            //Level reload when player press retry button. (In scenemanagment script)
+        }
+
     }
 
     void ReloadLevel()

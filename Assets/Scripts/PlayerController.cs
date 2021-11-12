@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     {
         ProcessThrust();
         ProcessRotation();
-        Debug.Log(slider.value.ToString());
+        //Debug.Log(slider.value.ToString());
        
 
         CurrentLevel = CollisionController.Current.getCurrentLevelIndex;
@@ -96,11 +96,11 @@ public class PlayerController : MonoBehaviour
 
     public void ProcessRotation()
     {
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.D))
         {
             ApplyRotation(rotateSpeed);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.A))
         {
             ApplyRotation(-rotateSpeed);
         }

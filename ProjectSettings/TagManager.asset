@@ -6,6 +6,8 @@ TagManager:
   tags:
   - fuel
   - Friendly
+  - Sounds
+  - gameCollision
   layers:
   - Default
   - TransparentFX
